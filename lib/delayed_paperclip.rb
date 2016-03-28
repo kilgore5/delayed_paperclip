@@ -66,6 +66,15 @@ module DelayedPaperclip
 
       end
 
+      # what's going on above?
+      # definition options not getting set properly
+      # let's hack this for now
+      Paperclip::AttachmentRegistry.each_definition do |klass, attachment_name, attachment_attributes|
+        if klass.to_s == self.to_s
+          attachment_attributes = attachment_attributes.merge!({ delayed: paperclip_definitions[name][:delayed] })
+        end
+      end
+
       # Sets callback
       if respond_to?(:after_commit)
         after_commit  :enqueue_delayed_processing
